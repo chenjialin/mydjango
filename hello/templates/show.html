@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang='en'>
+    <meta charset='UTF-8'>
+    <title></title>
+    <script src='http://code.jquery.com/jquery-latest.js'></script>
+
+</head>
+<body>
+<div id='show_data'>
+
+</div>
+</body>
+<script>
+    function ajaxSend(reqUest_url, post_data, callback, request_method, return_type, dict_vars) {
+        var params = {
+            url: reqUest_url,
+            data: post_data || '',
+            type: request_method || 'POST',
+            success: callback,
+            error: function (request, textStatus, errorThrown) {
+                alert("Request failed, please try again.");
+            },
+            return_type: return_type || 'json',
+            cache: false,
+            global: true,
+            ajax_func_flag: false,
+            custom_func: callback
+        };
+        if (dict_vars) {
+            for (var key in dict_vars) {
+                params[key] = dict_vars[key];
+            }
+        }
+        $.ajax(params);
+    }
+
+    var data_obj = $('#show_data')[0];
+    var show_list = ['artist', 'artistLink', 'album', 'albumLink', 'albumPrice', 'category', 'coverArt', 'releasedate'];
+    ajaxSend('../get_detail', {}, function (all_data) {
+        var str_html = "";
+        for (var i=0;i<all_data.length;i++){
+            var temp_str = "";
+            temp_str +=
+                      "<div><a target='_blank' href='" + all_data[i][show_list[1]] + "'>" + all_data[i][show_list[0]] + "</a></div>" +
+                      "<div><a target='_blank' href='" + all_data[i][show_list[3]] + "'>" + all_data[i][show_list[2]] + "</a></div>" +
+                    "<div>"+ all_data[i][show_list[4]] +"</div>" +
+                    "<div>"+ all_data[i][show_list[5]] +"</div>" +
+                    "<div><img style='max-width:90%' src='" + all_data[i][show_list[6]] + "'></div>" +
+                    "<div>"+ all_data[i][show_list[7]] +"</div>";
+
+            console.log(temp_str);
+            str_html += "<hr/><li>" + temp_str + "</li>"
+        }
+        data_obj.innerHTML = str_html;
+    }, 'GET');
+
+
+</script>
+</html>
